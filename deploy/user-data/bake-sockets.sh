@@ -89,7 +89,6 @@ EOF
 --modules-folder ${NODE_PATH}
 
 EOF
-    chmod a+x /srv/app/run.sh
     chown -R ec2-user: /srv/app
     proxy_persist
     runuser -l ec2-user -c 'cd /srv/app/; yarn -s --ignore-optional --non-interactive --no-progress --network-timeout 1800 --use-yarnrc .yarnrc'
@@ -101,12 +100,15 @@ function cleanup() {
     yum -y clean all
     rm -rf /tmp/trivialsec
 }
+function do_release() {
+    setup_logging
+    setup_centos
+    install_nodejs
+    install_sockets_deps
+    deploy_sockets
+    configure_sockets
+    cleanup
+}
 
-setup_centos
-setup_logging
-install_nodejs
-install_sockets_deps
-deploy_sockets
-configure_sockets
-cleanup
+time do_release
 echo completed
