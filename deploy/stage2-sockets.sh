@@ -18,8 +18,8 @@ if [[ -f ${sql_migrate} ]]; then
 fi
 
 readonly base_ami=$1
-local num_instances=$2
-local instance_type=$3
+num_instances=$2
+instance_type=$3
 if [[ -z "${base_ami}" ]]; then
     echo "define the AMI to use"
     exit 1
