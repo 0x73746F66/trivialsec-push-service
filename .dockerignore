@@ -1,0 +1,17 @@
+.vscode/
+.vscode*
+.git/
+.venv/
+.cache
+.terraform/
+terraform.*
+**.tf
+**.tfstate
+.dockerignore
+.in
+.out
+Makefile
+README.md
+**/node_modules/
+**/build/
+**/*.zip

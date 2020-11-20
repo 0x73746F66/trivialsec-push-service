@@ -1,0 +1,20 @@
+---
+app:
+  version: 20201011
+  default_port: 5080
+  log_file: /tmp/application.log
+  frontend:
+    site_scheme: "http://"
+    site_domain: localhost:5000
+    socket_scheme: "http://"
+    socket_domain: localhost:5080
+  backend:
+    socket_scheme: "http://"
+    socket_domain: sockets:5080
+
+aws:
+  region_name: ap-southeast-2
+  archive_bucket: trivialsec-assets
+  archive_object_prefix: archive/
+  public_bucket: trivialsec-assets
+  public_object_prefix: static/

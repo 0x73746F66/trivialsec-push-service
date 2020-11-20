@@ -1,0 +1,16 @@
+{
+    "name": "sockets",
+    "version": "0.0.2",
+    "description": "Trivial Security sockets",
+    "main": "src/index.js",
+    "dependencies": {
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "js-yaml": "^3.13.1",
+        "nodemon": "^2.0.6",
+        "socket.io": "^2.3.0"
+    },
+    "devDependencies": {},
+    "author": "Christopher Langton",
+    "license": "ISC"
+}

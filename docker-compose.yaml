@@ -1,0 +1,48 @@
+version: '3.6'
+x-defaults: &defaults
+  env_file: .env
+  restart: unless-stopped
+  logging:
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  sockets:
+    <<: *defaults
+    image: trivialsec/sockets
+    container_name: sockets
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
+        NODE_PATH: ${NODE_PATH}
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - PORT=5080
+      - CONFIG_FILE=src/${CONFIG_FILE}
+    ports:
+      - 5080:5080
+    expose:
+      - 2812
+      - 5080
+    volumes:
+      - ./src:/srv/app/src
+    cap_drop:
+      - ALL
+    cap_add:
+      - DAC_OVERRIDE
+    networks:
+      trivialsec:
+        aliases:
+          - sockets
+
+networks:
+  trivialsec:
+
+volumes:
+  gitlab-runner-config:
+    external: true
+    name: gitlab-runner-config
