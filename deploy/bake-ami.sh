@@ -53,15 +53,15 @@ if [[ ${instanceId} == i-* ]]; then
     echo "PrivateIpAddress $(aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)"
     aws ec2 wait instance-status-ok --instance-ids ${instanceId}
     privateIp=$(aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
-    while ! [ $(ssh -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
-    do
-        sleep 2
-    done
     existingImageId=$(aws ec2 describe-images --owners self --filters "Name=name,Values=${ami_name}" --query 'Images[].ImageId' --output text)
     if [[ "${existingImageId}" == ami-* ]]; then
         aws ec2 deregister-image --image-id ${existingImageId}
         sleep 3
     fi
+    while ! [ $(ssh -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
+    do
+        sleep 2
+    done
     imageId=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
     sleep 60
     aws ec2 wait image-available --image-ids ${imageId}
