@@ -4,7 +4,7 @@ if [[ $EUID -eq 0 ]]; then
    echo -e "This script must not be run as root" 
    exit 1
 fi
-if [[ ! -d scripts ]]; then
+if [[ ! -d src ]]; then
     echo -e "Run this from the project root directory"
     exit 0
 fi
@@ -19,13 +19,13 @@ declare -a old_instances=\($(aws elbv2 describe-target-health --target-group-arn
 targets=''
 instances=''
 for instanceId in "${old_instances[@]}"; do
-    targets="${targets} Id=${instanceId},Port=5080"
+    targets="${targets} Id=${instanceId},Port=${SOCKETS_PORT}"
     instances="${instances} ${instanceId}"
 done
 
-imageId=$(scripts/deploy/bake-ami.sh sockets sg-0c1d7baef47bb7c14 180|tail -n1)
+imageId=$(deploy/bake-ami.sh sockets sg-0c1d7baef47bb7c14 180|tail -n1)
 if [[ ${imageId} == ami-* ]]; then
-    ./scripts/deploy/stage2-sockets.sh ${imageId} ${NUM_INSTANCES}
+    ./deploy/stage2-sockets.sh ${imageId} ${NUM_INSTANCES}
     aws elbv2 deregister-targets --target-group-arn ${TARGET_GROUP_ARN} --targets${targets}
     aws ec2 terminate-instances --instance-ids${instances}
 fi

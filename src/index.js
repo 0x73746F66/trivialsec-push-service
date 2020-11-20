@@ -62,7 +62,7 @@ const download_to_file = (url, dest_path, callback) => {
     }
 }
 
-app.set('port', process.env.PORT || config.app.default_port || 5080)
+app.set('port', process.env.SOCKETS_PORT || config.app.default_port || 5080)
 
 io.on('connection', socket => {
     socket.on('disconnect', data => {

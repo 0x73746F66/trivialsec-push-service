@@ -43,10 +43,15 @@ deploy:
     - python
   stage: deploy
   variables:
-    TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8
     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
     AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+    SUBNET_ID: subnet-8b05e8c3
+    SECURITY_GROUP_IDS: sg-0c1d7baef47bb7c14 sg-01bbdeecc61359d59
+    IAM_INSTANCE_PROFILE: EC2-TrivialSec
+    COST_CENTER: saas
+    PRIV_KEY_NAME: trivialsec-prod
+    TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8
   script:
     - COUNT=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo ${COUNT}
