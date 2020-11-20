@@ -10,7 +10,6 @@ if [[ ! -d src ]]; then
 fi
 
 readonly instance_type=t3a.medium
-readonly priv_key_name=trivialsec-baker
 readonly base_ami=ami-0ded330691a314693
 readonly sg_ids='sg-04a8dac724adcad3c sg-01bbdeecc61359d59'
 readonly workload_type=$1
@@ -29,17 +28,19 @@ if [[ ! -f deploy/user-data/bake-${workload_type}.sh ]]; then
     exit 1
 fi
 
-aws s3 cp s3://cloudformation-trivialsec/deploy-keys/${priv_key_name}.pem ~/.ssh/${priv_key_name}.pem
-chmod 400 ~/.ssh/${priv_key_name}.pem
+mkdir -p ~/.ssh
+aws s3 cp s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
+chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
 eval $(ssh-agent -s)
-ssh-add ~/.ssh/${priv_key_name}.pem
+ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
+ssh-keyscan -H proxy.trivialsec.com >> ~/.ssh/known_hosts
 
 instanceId=$(aws ec2 run-instances \
     --no-associate-public-ip-address \
     --image-id ${base_ami} \
     --count 1 \
     --instance-type ${instance_type} \
-    --key-name ${priv_key_name} \
+    --key-name ${PRIV_KEY_NAME} \
     --subnet-id ${SUBNET_ID} \
     --security-group-ids ${sg_ids} ${additional_sgs} \
     --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
