@@ -19,8 +19,6 @@ services:
         NODE_ENV: ${NODE_ENV}
         NODE_PATH: ${NODE_PATH}
     environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - SOCKETS_PORT=5080
       - CONFIG_FILE=src/${CONFIG_FILE}
     ports:

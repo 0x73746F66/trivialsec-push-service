@@ -13,7 +13,7 @@ build:
   variables:
     COMMON_VERSION: 0.1.4
     NODE_ENV: production
-    NODE_PATH: /home/ec2-user/node_modules
+    NODE_PATH: /srv/app/node_modules
   script:
     - make package
   only:
@@ -28,7 +28,7 @@ build-upload:
   variables:
     COMMON_VERSION: 0.1.4
     NODE_ENV: production
-    NODE_PATH: /home/ec2-user/node_modules
+    NODE_PATH: /srv/app/node_modules
     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
     AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION

@@ -1,9 +1,5 @@
 FROM trivialsec/node-base
 
-ARG AWS_ACCESS_KEY_ID
-ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
-ARG AWS_SECRET_ACCESS_KEY
-ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 ENV CONFIG_FILE ${CONFIG_FILE}
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
@@ -23,4 +19,4 @@ USER ec2-user
 COPY package.json package.json
 RUN yarn -s --ignore-optional --non-interactive --no-progress --network-timeout 1800 --use-yarnrc .yarnrc
 ENTRYPOINT ["/usr/bin/env"]
-CMD ["nodemon", "start"]
+CMD ["/srv/app/node_modules/.bin/nodemon", "-V", "--no-stdin", "start"]
