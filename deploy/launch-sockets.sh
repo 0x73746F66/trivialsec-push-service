@@ -26,7 +26,9 @@ done
 imageId=$(deploy/bake-ami.sh sockets sg-0c1d7baef47bb7c14 | tail -n1)
 if [[ ${imageId} == ami-* ]]; then
     ./deploy/stage2-sockets.sh ${imageId} ${NUM_INSTANCES}
-    aws elbv2 deregister-targets --target-group-arn ${TARGET_GROUP_ARN} --targets${targets}
-    aws ec2 terminate-instances --instance-ids${instances}
+    if ! [[ -z "${targets}" ]]; then
+        aws elbv2 deregister-targets --target-group-arn ${TARGET_GROUP_ARN} --targets${targets}
+        aws ec2 terminate-instances --instance-ids${instances}
+    fi
 fi
 echo "$imageId"
