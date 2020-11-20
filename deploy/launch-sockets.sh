@@ -23,7 +23,7 @@ for instanceId in "${old_instances[@]}"; do
     instances="${instances} ${instanceId}"
 done
 
-imageId=$(deploy/bake-ami.sh sockets sg-0c1d7baef47bb7c14 180|tail -n1)
+imageId=$(deploy/bake-ami.sh sockets sg-0c1d7baef47bb7c14 | tail -n1)
 if [[ ${imageId} == ami-* ]]; then
     ./deploy/stage2-sockets.sh ${imageId} ${NUM_INSTANCES}
     aws elbv2 deregister-targets --target-group-arn ${TARGET_GROUP_ARN} --targets${targets}

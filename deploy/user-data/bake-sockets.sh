@@ -111,4 +111,4 @@ function do_release() {
 }
 
 time do_release
-echo completed
+echo $(date +'%F') > /home/ec2-user/.deployed
