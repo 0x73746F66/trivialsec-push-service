@@ -58,7 +58,7 @@ if [[ ${instanceId} == i-* ]]; then
         aws ec2 deregister-image --image-id ${existingImageId}
         sleep 3
     fi
-    while ! [ $(ssh -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
+    while ! [ $(ssh -o 'StrictHostKeyChecking no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
     do
         sleep 2
     done
