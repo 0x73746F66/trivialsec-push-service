@@ -53,7 +53,7 @@ if [[ ${instanceId} == i-* ]]; then
     echo "PrivateIpAddress $(aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)"
     aws ec2 wait instance-status-ok --instance-ids ${instanceId}
     privateIp=$(aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
-    while ! [ ssh -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?' -eq 0 ]
+    while ! [ $(ssh -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
     do
         sleep 2
     done
