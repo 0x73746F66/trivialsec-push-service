@@ -11,8 +11,8 @@ fi
 
 readonly base_ami=ami-0ded330691a314693
 readonly sg_ids='sg-04a8dac724adcad3c sg-01bbdeecc61359d59'
-readonly ami_name=${workload_type}-$(date +'%F')
 readonly workload_type=$1
+readonly ami_name=${workload_type}-$(date +'%F')
 additional_sgs=$2
 build_check_delay=$3
 if [[ -z "${workload_type}" ]]; then
