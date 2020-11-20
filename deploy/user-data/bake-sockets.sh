@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 export COMMON_VERSION=0.1.4
+export NODE_PATH=/home/ec2-user/node_modules
 
 function proxy_on() {
     local proxyPrivateAddr=proxy.trivialsec.local
@@ -71,31 +72,21 @@ function install_sockets_deps() {
 }
 function deploy_sockets() {
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/sockets-${COMMON_VERSION}.zip /tmp/trivialsec/sockets.zip
-    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl \
-        /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/build-${COMMON_VERSION}.zip /tmp/trivialsec/build.zip
-    unzip -qo /tmp/trivialsec/sockets.zip -d /tmp/trivialsec
-    unzip -q /tmp/trivialsec/build.zip -d /srv/app
-    cp -nr /tmp/trivialsec/sockets/src /srv/app
-    cp -n /tmp/trivialsec/run.sh /srv/app/run.sh
-    cp -n /tmp/trivialsec/package.json /srv/app/package.json
+    unzip -qo /tmp/trivialsec/sockets.zip -d /srv/app
 }
 function configure_sockets() {
     mkdir -p /srv/app
     touch /tmp/application.log
     cat > /srv/app/.env << EOF
-APP_ENV=Prod
-APP_NAME=trivialsec
-LOG_LEVEL=WARNING
 CONFIG_FILE=src/config.yaml
 NODE_ENV=production
-NODE_PATH=/home/ec2-user/node_modules
+NODE_PATH=${NODE_PATH}
 AWS_ACCOUNT=$(TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" --stderr /dev/null) && curl -s -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/iam/info --stderr /dev/null | jq -r '.InstanceProfileArn' | cut -d ":" -f 5)
 AWS_REGION=ap-southeast-2
 
 EOF
     cat > /srv/app/.yarnrc << EOF
---modules-folder /srv/app/node_modules
+--modules-folder ${NODE_PATH}
 
 EOF
     chmod a+x /srv/app/run.sh

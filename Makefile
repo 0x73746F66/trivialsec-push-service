@@ -38,3 +38,9 @@ down: ## Stop the app
 	docker-compose stop sockets
 	yes|docker-compose rm sockets
 
+package:
+	zip -9rq sockets.zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
+	zip -uj9q sockets.zip package.json
+
+package-upload: package
+	$(CMD_AWS) s3 cp $(PKG_PATH)/sockets.zip s3://cloudformation-trivialsec/deploy-packages/sockets-$(COMMON_VERSION).zip
