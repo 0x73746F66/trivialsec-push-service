@@ -50,4 +50,4 @@ package:
 	zip -uj9q sockets.zip package.json
 
 package-upload: package
-	$(CMD_AWS) s3 cp sockets.zip s3://cloudformation-trivialsec/deploy-packages/sockets-$(COMMON_VERSION).zip
+	$(CMD_AWS) s3 cp --only-show-errors sockets.zip s3://cloudformation-trivialsec/deploy-packages/sockets-$(COMMON_VERSION).zip

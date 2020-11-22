@@ -29,7 +29,7 @@ if [[ ! -f deploy/user-data/bake-${workload_type}.sh ]]; then
 fi
 
 mkdir -p ~/.ssh
-aws s3 cp s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
+aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
 chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
 eval $(ssh-agent -s)
 ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
