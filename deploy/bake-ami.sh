@@ -63,6 +63,8 @@ if [[ ${instanceId} == i-* ]]; then
     do
         sleep 2
     done
+    scp -o 'StrictHostKeyChecking no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp}:/var/log/user-data.log .
+    cat user-data.log
     imageId=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
     sleep 60
     aws ec2 wait image-available --image-ids ${imageId}
