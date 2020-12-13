@@ -38,6 +38,8 @@ services:
 
 networks:
   trivialsec:
+    external: true
+    name: containers-common_trivialsec
 
 volumes:
   gitlab-runner-config:

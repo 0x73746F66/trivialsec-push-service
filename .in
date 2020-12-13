@@ -13,9 +13,12 @@ fi
 
 echo -e "\033[0;36m"
 echo $(make --version)
+echo $(docker --version)
+echo $(docker-compose --version)
 echo node $(node --version)
 echo yarn $(yarn --version)
 echo -e "\033[0m"
+docker-compose ps
 git fetch
 git status
 echo
