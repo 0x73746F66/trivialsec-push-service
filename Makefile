@@ -1,8 +1,9 @@
 SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
+APP_NAME = sockets
 
-.PHONY: up
+.PHONY: help
 
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -19,7 +20,7 @@ endif
 build: ## Build compressed container
 	docker-compose build --compress sockets
 
-buildnc: ## Clean build docker
+buildnc: package-dev ## Clean build docker
 	docker-compose build --no-cache --compress sockets
 
 rebuild: down build
@@ -39,15 +40,17 @@ docker-purge: ## tries to compeltely remove all docker files and start clean
 	sudo service docker start
 
 up: ## Start the app
-	docker-compose up -d sockets
+	docker-compose up -d $(APP_NAME)
 
 down: ## Stop the app
-	docker-compose stop sockets
-	yes|docker-compose rm sockets
+	@docker-compose down
 
 package:
-	zip -9rq sockets.zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
-	zip -uj9q sockets.zip package.json
+	zip -9rq $(APP_NAME).zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
+	zip -uj9q $(APP_NAME).zip package.json
 
 package-upload: package
-	$(CMD_AWS) s3 cp --only-show-errors sockets.zip s3://cloudformation-trivialsec/deploy-packages/sockets-$(COMMON_VERSION).zip
+	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://cloudformation-trivialsec/deploy-packages/$(APP_NAME)-$(COMMON_VERSION).zip
+
+package-dev: package
+	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://cloudformation-trivialsec/deploy-packages/$(APP_NAME)-dev-$(COMMON_VERSION).zip

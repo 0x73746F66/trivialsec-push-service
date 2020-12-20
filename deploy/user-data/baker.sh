@@ -98,7 +98,7 @@ function cleanup() {
     chown -R ec2-user: /srv/app /tmp/application.log
     yum groupremove -q -y "Development Tools"
     yum -y clean all
-    rm -rf /tmp/trivialsec
+    rm -rf /tmp/trivialsec /var/cache/yum
 }
 function do_release() {
     setup_logging
