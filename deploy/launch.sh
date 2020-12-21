@@ -87,7 +87,7 @@ Host proxy
   IdentityFile ~/.ssh/${PRIV_KEY_NAME}.pem
   User ec2-user
 
-Host ec2
+Host baker
   CheckHostIP no
   StrictHostKeyChecking no
   Hostname ${ip_address}
@@ -96,6 +96,29 @@ Host ec2
   ProxyCommand ssh -W %h:%p proxy
 
 EOF
+}
+
+function baker_checker() {
+    set +x
+    local i=0
+    local interval=$1
+    local log_after=$2
+    echo '-------------------------------------------'
+    echo Baking AMI
+    while ! [ $(ssh -4 baker 'echo `[ -f .deployed ]` $?' || echo 1) -eq 0 ]
+    do
+        if [[ $(( ${i} % ${log_after} )) -ne 0 ]]; then
+            ssh -4 baker 'tail -n5 /var/log/user-data.log'
+        fi
+        sleep ${interval}
+        ((i=i+1))
+    done
+    echo
+    echo Baking DONE!
+    echo '-------------------------------------------'
+    set -x
+    scp -4 baker:/var/log/user-data.log .
+    cat user-data.log
 }
 
 declare -a old_instances_query=\($(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[].Target.Id' --output text)\)
@@ -134,12 +157,7 @@ if [[ "${existingImageId}" == ami-* ]]; then
     aws ec2 deregister-image --image-id ${existingImageId}
 fi
 setup_ssh ${privateIp}
-while ! [ $(ssh -4 ec2 'echo `[ -f .deployed ]` $?' || echo 1) -eq 0 ]
-do
-    sleep 2
-done
-scp -4 ec2:/var/log/user-data.log .
-cat user-data.log
+baker_checker 2 5
 readonly image_id=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
 sleep 60
 aws ec2 wait image-available --image-ids ${image_id}
