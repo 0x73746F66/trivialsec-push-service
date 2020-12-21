@@ -17,6 +17,7 @@ variables:
   SOCKETS_PORT: 5080
   NODE_ENV: production
   NODE_PATH: /srv/app/node_modules
+  NUM_INSTANCES: $(aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8 --query 'TargetHealthDescriptions[]' | jq '. | length')
 
 before_script:
   - aws --version
@@ -57,7 +58,6 @@ deploy:
     - python
   stage: deploy
   script:
-    - NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
     - ./deploy/launch.sh
   only:
