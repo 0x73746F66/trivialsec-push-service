@@ -1,3 +1,23 @@
+variables:
+  COMMON_VERSION: 0.1.5
+  APP_NAME: sockets
+  TAG_ENV: Prod
+  TAG_PURPOSE: Deploy
+  TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  BASE_AMI: ami-09f765d333a8ebb4b
+  SUBNET_ID: subnet-8b05e8c3
+  DEFAULT_INSTANCE_TYPE: t2.micro
+  IAM_INSTANCE_PROFILE: EC2-TrivialSec
+  COST_CENTER: saas
+  PRIV_KEY_NAME: trivialsec-prod
+  SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0c1d7baef47bb7c14
+  SOCKETS_PORT: 5080
+  NODE_ENV: production
+  NODE_PATH: /srv/app/node_modules
+
 before_script:
   - aws --version
   - echo nodejs $(node --version)
@@ -14,10 +34,6 @@ build:
   tags:
     - python
   stage: build
-  variables:
-    COMMON_VERSION: 0.1.4
-    NODE_ENV: production
-    NODE_PATH: /srv/app/node_modules
   script:
     - make package
   only:
@@ -29,13 +45,6 @@ build-upload:
   tags:
     - python
   stage: build
-  variables:
-    COMMON_VERSION: 0.1.4
-    NODE_ENV: production
-    NODE_PATH: /srv/app/node_modules
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   script:
     - make package-upload
   only:
@@ -47,22 +56,6 @@ deploy:
   tags:
     - python
   stage: deploy
-  variables:
-    APP_NAME: sockets
-    TAG_ENV: Prod
-    TAG_PURPOSE: Deploy
-    TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-    BASE_AMI: ami-09f765d333a8ebb4b
-    SUBNET_ID: subnet-8b05e8c3
-    DEFAULT_INSTANCE_TYPE: t2.micro
-    IAM_INSTANCE_PROFILE: EC2-TrivialSec
-    COST_CENTER: saas
-    PRIV_KEY_NAME: trivialsec-prod
-    SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0c1d7baef47bb7c14
-    SOCKETS_PORT: 5080
   script:
     - NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
@@ -74,10 +67,6 @@ deploy:
 teardown:
   retry: 2
   stage: teardown
-  variables:
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   script:
     - ./deploy/teardown.sh
   only:
