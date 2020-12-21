@@ -113,12 +113,17 @@ function baker_checker() {
         sleep ${interval}
         ((i=i+1))
     done
-    echo
     echo Baking DONE!
     echo '-------------------------------------------'
     set -x
     scp -4 baker:/var/log/user-data.log .
+    set +x
+    echo '-------------------------------------------'
+    echo Baker logs
     cat user-data.log
+    echo
+    echo '-------------------------------------------'
+    set -x
 }
 
 declare -a old_instances_query=\($(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[].Target.Id' --output text)\)
