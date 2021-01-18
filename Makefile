@@ -18,10 +18,10 @@ CMD_AWS += --region $(AWS_REGION)
 endif
 
 build: ## Build compressed container
-	docker-compose build --compress sockets
+	docker-compose build
 
 buildnc: package-dev ## Clean build docker
-	docker-compose build --no-cache --compress sockets
+	docker-compose build --no-cache
 
 rebuild: down build
 

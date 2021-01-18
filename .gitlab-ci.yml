@@ -1,5 +1,4 @@
 variables:
-  COMMON_VERSION: 0.1.5
   APP_NAME: sockets
   TAG_ENV: Prod
   TAG_PURPOSE: Deploy
