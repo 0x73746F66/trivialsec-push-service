@@ -90,14 +90,8 @@ io.on('connection', socket => {
             data = JSON.parse(json)
         }
         const client_token = data.socket_key
-        const project_token = data.project_tracking_id
         delete data.socket_key
-        delete data.project_tracking_id
-        if (project_token) {
-            io.sockets.in(project_token).emit('domain_changes', data)
-        } else if (client_token) {
-            io.sockets.in(client_token).emit('domain_changes', data)
-        }
+        io.sockets.in(client_token).emit('domain_changes', data)
     })
 
     socket.on('dns_changes', json => {
@@ -106,14 +100,8 @@ io.on('connection', socket => {
             data = JSON.parse(json)
         }
         const client_token = data.socket_key
-        const project_token = data.project_tracking_id
         delete data.socket_key
-        delete data.project_tracking_id
-        if (project_token) {
-            io.sockets.in(project_token).emit('dns_changes', data)
-        } else if (client_token) {
-            io.sockets.in(client_token).emit('dns_changes', data)
-        }
+        io.sockets.in(client_token).emit('dns_changes', data)
 
     })
 
