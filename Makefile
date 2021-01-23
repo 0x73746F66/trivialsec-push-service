@@ -17,6 +17,10 @@ ifdef AWS_REGION
 CMD_AWS += --region $(AWS_REGION)
 endif
 
+prep:
+	find . -type f -name '*.DS_Store' -delete 2>/dev/null || true
+	@rm *.zip || true
+
 build: ## Build compressed container
 	docker-compose build
 
@@ -45,8 +49,8 @@ up: ## Start the app
 down: ## Stop the app
 	@docker-compose down
 
-package:
-	zip -9rq $(APP_NAME).zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
+package: prep
+	zip -9rq $(APP_NAME).zip src -x '*.DS_Store'
 	zip -uj9q $(APP_NAME).zip package.json
 
 package-upload: package
