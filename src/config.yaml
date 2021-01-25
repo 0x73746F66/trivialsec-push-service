@@ -1,6 +1,6 @@
 ---
 app:
-  version: 21.1.241
+  version: 21.1.25
   default_port: 5080
   log_file: /tmp/application.log
   proxy:
