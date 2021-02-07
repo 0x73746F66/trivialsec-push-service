@@ -1,13 +1,13 @@
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-export COMMON_VERSION=0.3.10
+export COMMON_VERSION=0.4.1
 export NODE_PATH=/srv/app/node_modules
 
 function proxy_on() {
     local proxyPrivateAddr=proxy.trivialsec.local
     export http_proxy=http://${proxyPrivateAddr}:3128/
     export https_proxy=http://${proxyPrivateAddr}:3128/
-    export no_proxy=169.254.169.254,cloudformation-trivialsec.s3.amazonaws.com,s3.ap-southeast-2.amazonaws.com,ssm.ap-southeast-2.amazonaws.com,logs.ap-southeast-2.amazonaws.com,sts.amazonaws.com
+    export no_proxy=169.254.169.254,trivialsec-assets.s3.amazonaws.com,s3.ap-southeast-2.amazonaws.com,ssm.ap-southeast-2.amazonaws.com,logs.ap-southeast-2.amazonaws.com,sts.amazonaws.com
 }
 function proxy_off() {
     unset http_proxy
@@ -71,7 +71,7 @@ function install_sockets_deps() {
     runuser -l ec2-user -c 'make --version'
 }
 function deploy_sockets() {
-    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/sockets-${COMMON_VERSION}.zip /tmp/trivialsec/sockets.zip
+    aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/sockets.zip /tmp/trivialsec/sockets.zip
     unzip -qo /tmp/trivialsec/sockets.zip -d /srv/app
 }
 function configure_sockets() {

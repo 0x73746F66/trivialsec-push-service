@@ -1,6 +1,6 @@
 ---
 app:
-  version: 21.1.28
+  version: 21.2.01
   default_port: 5080
   log_file: /tmp/application.log
   frontend:
@@ -11,10 +11,3 @@ app:
   backend:
     socket_scheme: "http://"
     socket_domain: sockets:5080
-
-aws:
-  region_name: ap-southeast-2
-  archive_bucket: trivialsec-assets
-  archive_object_prefix: archive/
-  public_bucket: trivialsec-assets
-  public_object_prefix: static/
