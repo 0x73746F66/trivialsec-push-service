@@ -23,11 +23,25 @@ before_script:
   - echo nodejs $(node --version)
   - echo npm $(npm --version)
   - echo yarn $(yarn --version)
+  - echo semgrep $(semgrep --version)
 
 stages:
+  - test
   - build
   - deploy
   - teardown
+
+lint:
+  retry: 2
+  tags:
+    - python
+  stage: test
+  script:
+    - make lint
+  only:
+    refs:
+      - merge_request
+      - master
 
 build:
   retry: 2
