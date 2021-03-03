@@ -50,8 +50,8 @@ down: ## Stop the app
 	@docker-compose down
 
 lint:
-	semgrep -q --strict --timeout=0 --config=p/ci --lang=javascript src/**/*.js
-	semgrep -q --strict --timeout=0 --config=p/nodejsscan --lang=javascript src/**/*.js
+	semgrep -q --strict --timeout=0 --config=p/ci --lang=javascript src/index.js
+	semgrep -q --strict --timeout=0 --config=p/nodejsscan --lang=javascript src/index.js
 
 package: prep
 	zip -9rq $(APP_NAME).zip src -x '*.DS_Store'
