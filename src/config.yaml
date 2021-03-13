@@ -8,7 +8,11 @@ app:
     port: 3128
   frontend:
     site_scheme: "http://"
-    site_domain: localhost:5000
+    site_domain: www.trivialsec.com
+    app_scheme: "https://"
+    app_domain: app.trivialsec.com
+    api_scheme: "https://"
+    api_domain: api.trivialsec.com
     socket_scheme: "http://"
     socket_domain: localhost:5080
   backend:

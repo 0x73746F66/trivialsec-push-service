@@ -5,7 +5,11 @@ app:
   log_file: /tmp/application.log
   frontend:
     site_scheme: "http://"
-    site_domain: localhost:5000
+    site_domain: localhost:8080
+    app_scheme: "http://"
+    app_domain: localhost:5000
+    api_scheme: "http://"
+    api_domain: localhost:5081
     socket_scheme: "http://"
     socket_domain: localhost:5080
   backend:
