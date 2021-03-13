@@ -1,6 +1,7 @@
 version: '3.6'
 x-defaults: &defaults
   env_file: .env
+  network_mode: host
   restart: unless-stopped
   logging:
     options:
@@ -31,21 +32,7 @@ services:
       - ALL
     cap_add:
       - DAC_OVERRIDE
-    networks:
-      trivialsec:
-        aliases:
-          - sockets
     healthcheck:
       test: curl -f http://localhost:5080/healthcheck || exit 1
       timeout: 20s
       retries: 10
-
-networks:
-  trivialsec:
-    external: true
-    name: containers-common_trivialsec
-
-volumes:
-  gitlab-runner-config:
-    external: true
-    name: gitlab-runner-config
