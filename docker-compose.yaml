@@ -1,7 +1,7 @@
 version: '3.6'
 x-defaults: &defaults
   env_file: .env
-  network_mode: host
+  # network_mode: host
   restart: unless-stopped
   logging:
     options:
@@ -22,8 +22,6 @@ services:
     environment:
       - SOCKETS_PORT=5080
       - CONFIG_FILE=src/${CONFIG_FILE}
-    ports:
-      - 5080:5080
     expose:
       - 5080
     volumes:
@@ -36,3 +34,11 @@ services:
       test: curl -f http://localhost:5080/healthcheck || exit 1
       timeout: 20s
       retries: 10
+    networks:
+      - trivialsec
+
+networks:
+  trivialsec:
+    external:
+      name: trivialsec
+      

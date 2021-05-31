@@ -4,6 +4,8 @@ app:
   default_port: 5080
   log_file: /tmp/application.log
   frontend:
+    asset_scheme: "http://"
+    asset_domain: localhost:9000
     site_scheme: "http://"
     site_domain: localhost:8080
     app_scheme: "http://"

@@ -7,7 +7,9 @@ app:
     host: proxy.trivialsec.local
     port: 3128
   frontend:
-    site_scheme: "http://"
+    asset_scheme: "https://"
+    asset_domain: www.trivialsec.com
+    site_scheme: "https://"
     site_domain: www.trivialsec.com
     app_scheme: "https://"
     app_domain: app.trivialsec.com

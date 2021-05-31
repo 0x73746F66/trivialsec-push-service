@@ -54,11 +54,13 @@ lint:
 	semgrep -q --strict --timeout=0 --config=p/nodejsscan --lang=javascript src/index.js
 
 package: prep
-	zip -9rq $(APP_NAME).zip src -x '*.DS_Store'
-	zip -uj9q $(APP_NAME).zip package.json
+	tar --exclude '*.DS_Store' -cf $(APP_NAME).tar src
+	tar -rf $(APP_NAME).tar package.json
+	gzip -f9 $(APP_NAME).tar
+	ls -l --block-size=M $(APP_NAME).tar.gz
 
-package-upload: package
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/deploy-packages/$(COMMON_VERSION)/$(APP_NAME).zip
+package-upload:
+	$(CMD_AWS) --profile trivialsec s3 cp --only-show-errors $(APP_NAME).tar.gz s3://static-trivialsec/deploy-packages/$(COMMON_VERSION)/$(APP_NAME).tar.gz
 
 package-dev: package
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/dev/$(COMMON_VERSION)/$(APP_NAME).zip
+	$(CMD_AWS) --profile minio --endpoint-url http://localhost:9000 s3 cp --only-show-errors $(APP_NAME).tar.gz s3://static-trivialsec/deploy-packages/$(COMMON_VERSION)/$(APP_NAME).tar.gz

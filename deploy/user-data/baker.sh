@@ -7,7 +7,7 @@ function proxy_on() {
     local proxyPrivateAddr=proxy.trivialsec.local
     export http_proxy=http://${proxyPrivateAddr}:3128/
     export https_proxy=http://${proxyPrivateAddr}:3128/
-    export no_proxy=169.254.169.254,trivialsec-assets.s3.amazonaws.com,s3.ap-southeast-2.amazonaws.com,ssm.ap-southeast-2.amazonaws.com,logs.ap-southeast-2.amazonaws.com,sts.amazonaws.com
+    export no_proxy=169.254.169.254,static-trivialsec.s3.amazonaws.com,trivialsec-assets.s3.amazonaws.com,s3.ap-southeast-2.amazonaws.com,ssm.ap-southeast-2.amazonaws.com,logs.ap-southeast-2.amazonaws.com,sts.amazonaws.com
 }
 function proxy_off() {
     unset http_proxy
@@ -71,8 +71,8 @@ function install_sockets_deps() {
     runuser -l ec2-user -c 'make --version'
 }
 function deploy_sockets() {
-    aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/sockets.zip /tmp/trivialsec/sockets.zip
-    unzip -qo /tmp/trivialsec/sockets.zip -d /srv/app
+    aws s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/${COMMON_VERSION}/sockets.tar.gz /tmp/trivialsec/sockets.tar.gz
+    tar -xzvf /tmp/trivialsec/sockets.tar.gz -C /srv/app
 }
 function configure_sockets() {
     mkdir -p /srv/app
