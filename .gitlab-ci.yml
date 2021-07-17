@@ -1,19 +1,8 @@
 variables:
-  COMMON_VERSION: 0.4.4
-  APP_NAME: sockets
   TAG_ENV: Prod
   TAG_PURPOSE: Deploy
-  TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod-sockets/00073980e0e9f7a8
-  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-  BASE_AMI: ami-09f765d333a8ebb4b
-  SUBNET_ID: subnet-8b05e8c3
-  DEFAULT_INSTANCE_TYPE: t2.micro
-  IAM_INSTANCE_PROFILE: EC2-TrivialSec
-  COST_CENTER: saas
-  PRIV_KEY_NAME: trivialsec-prod
-  SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0c1d7baef47bb7c14
+  AWS_ACCESS_KEY_ID: $TF_VAR_aws_access_key_id
+  AWS_SECRET_ACCESS_KEY: $TF_VAR_aws_secret_access_key
   SOCKETS_PORT: 5080
   NODE_ENV: production
   NODE_PATH: /srv/app/node_modules
@@ -27,9 +16,6 @@ before_script:
 
 stages:
   - test
-  - build
-  - deploy
-  - teardown
 
 lint:
   retry: 2
@@ -41,48 +27,4 @@ lint:
   only:
     refs:
       - merge_request
-      - master
-
-build:
-  retry: 2
-  tags:
-    - python
-  stage: build
-  script:
-    - make package
-  only:
-    refs:
-      - merge_request
-
-build-upload:
-  retry: 2
-  tags:
-    - python
-  stage: build
-  script:
-    - make package-upload
-  only:
-    refs:
-      - master
-
-deploy:
-  retry: 2
-  tags:
-    - python
-  stage: deploy
-  script:
-    - export NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
-    - echo NUM_INSTANCES ${NUM_INSTANCES}
-    - ./deploy/launch.sh
-  only:
-    refs:
-      - master
-
-teardown:
-  retry: 2
-  stage: teardown
-  script:
-    - ./deploy/teardown.sh
-  only:
-    refs:
-      - master
+      - main

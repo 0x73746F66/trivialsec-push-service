@@ -1,25 +1,21 @@
 require('dotenv').config()
 const app = require('express')()
-const _url = require('url')
-const http = require('http')
-const https = require('https')
-const server = http.createServer(app)
+const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 const yaml = require('js-yaml')
 const fs = require('fs')
-const config = yaml.safeLoad(fs.readFileSync(process.env.CONFIG_FILE, 'utf8'))
+const config = yaml.load(fs.readFileSync(process.env.CONFIG_FILE, 'utf8'))
 const readline = require('readline')
 const suffix_list_file_path = '/tmp/public_suffix_list.dat'
-const suffix_list = 'https://publicsuffix.org/list/public_suffix_list.dat'
 
-const detect_publicsuffix = async target => {
+const detect_publicsuffix = target => {
     const fileStream = fs.createReadStream(suffix_list_file_path)
     const rl = readline.createInterface({
         input: fileStream,
         crlfDelay: Infinity
     })
     const suffixes = new Set()
-    for await (const line of rl) {
+    for (const line of rl) {
         const suffix = line.trim()
         if (suffix && !suffix.startsWith('#') && target.endsWith(suffix)) {
             suffixes.add(suffix)
@@ -30,36 +26,6 @@ const detect_publicsuffix = async target => {
         return null
     }
     return Array.from(suffixes).reduce((a, b) => a.length > b.length ? a : b)
-}
-
-const download_to_file = (url, dest_path, callback) => {
-    const file = fs.createWriteStream(dest_path)
-    let options = {}
-    options.minVersion = "TLSv1.2"
-    options.maxVersion = "TLSv1.3"
-    options.host = _url.parse(url).hostname
-    options.path = _url.parse(url).path
-    const handler = res => {
-        res.pipe(file)
-        file.on('finish', () => file.close(callback))
-    }
-    const err_handler = err => {
-        console.warn(err)
-    }
-    if ('proxy' in config.app) {
-        options.host = config.app.proxy.host
-        options.port = config.app.proxy.port
-        options.path = url
-        options.headers = {
-            Host: _url.parse(url).hostname,
-            // 'Proxy-Authorization': 'Basic ' + new Buffer(`${username}:${password}`).toString('base64')
-        }
-        http.get(options, handler).on('error', err_handler).end()
-    } else if (url.startsWith('https')) {
-        https.get(options, handler).on('error', err_handler).end()
-    } else if (url.startsWith('http')) {
-        http.get(options, handler).on('error', err_handler).end()
-    }
 }
 
 app.set('port', process.env.SOCKETS_PORT || config.app.default_port || 5080)
@@ -135,7 +101,7 @@ io.on('connection', socket => {
         const domains = new Set()
         for await (const t of data.targets) {
             let domain = t.target.trim()
-            const suffix = await detect_publicsuffix(domain)
+            const suffix = detect_publicsuffix(domain)
             if (suffix) {
                 let pattern = new RegExp(`\.${suffix}$`)
                 let parts = domain.replace(pattern, '').split('.')
@@ -146,7 +112,7 @@ io.on('connection', socket => {
         io.sockets.in(token).emit('check_domains_tld', data)
     })
 })
-app.get('/healthcheck', (req, res) => {
+app.get('/healthcheck', (_, res) => {
     res.status(200).send("ok")
 })
 server.listen(app.get('port'), () => {
@@ -154,7 +120,4 @@ server.listen(app.get('port'), () => {
         if (err) throw err
     })
     console.log(`listening on *:${app.get('port')}`)
-    download_to_file(suffix_list, suffix_list_file_path, () => {
-        console.log(`✅ ${suffix_list}`)
-    })
 })

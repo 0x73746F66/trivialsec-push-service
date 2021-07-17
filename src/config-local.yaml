@@ -1,11 +1,10 @@
 ---
 app:
-  version: 21.3.20
+  version: 21.6.28
   default_port: 5080
-  log_file: /tmp/application.log
   frontend:
     asset_scheme: "http://"
-    asset_domain: localhost:9000
+    asset_domain: localhost:8080
     site_scheme: "http://"
     site_domain: localhost:8080
     app_scheme: "http://"
@@ -16,4 +15,4 @@ app:
     socket_domain: localhost:5080
   backend:
     socket_scheme: "http://"
-    socket_domain: sockets:5080
+    socket_domain: push-service:5080

@@ -1,16 +1,28 @@
 {
-    "name": "sockets",
-    "version": "0.0.2",
-    "description": "Trivial Security sockets",
+    "name": "trivialsec-push-service",
+    "version": "0.1.0",
+    "description": "Trivial Security Push Service",
     "main": "src/index.js",
     "dependencies": {
-        "dotenv": "^8.2.0",
+        "dotenv": "^10.0.0",
         "express": "^4.17.1",
-        "js-yaml": "^3.13.1",
-        "nodemon": "^2.0.6",
-        "socket.io": "^2.3.0"
+        "js-yaml": "^4.1.0",
+        "nodemon": "^2.0.7",
+        "socket.io": "^4.1.2"
     },
     "devDependencies": {},
-    "author": "Christopher Langton",
-    "license": "ISC"
+    "scripts": {
+        "test": "make lint",
+        "run": "make serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@gitlab.com/trivialsec/push-service.git"
+    },
+    "author": "Christopher Langton <chris@trivialsec.com>",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "bugs": {
+        "url": "https://gitlab.com/trivialsec/push-service/issues"
+    },
+    "homepage": "https://www.trivialsec.com"
 }
