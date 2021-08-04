@@ -35,9 +35,9 @@ io.on('connection', socket => {
         console.log(`client disconnect ${data}`)
     })
 
-    socket.on('checkin', token => {
-        socket.join(token)
-        console.log(`checkin from ${token}`)
+    socket.on('checkin', uuid => {
+        socket.join(uuid)
+        console.log(`checkin from ${uuid}`)
     })
     
     socket.on('update_job_state', json => {
