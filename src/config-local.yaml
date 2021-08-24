@@ -13,6 +13,3 @@ app:
     api_domain: localhost:5081
     socket_scheme: "http://"
     socket_domain: localhost:5080
-  backend:
-    socket_scheme: "http://"
-    socket_domain: push-service:5080
