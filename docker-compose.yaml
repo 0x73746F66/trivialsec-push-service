@@ -21,7 +21,7 @@ services:
     cap_add:
       - DAC_OVERRIDE
     healthcheck:
-      test: curl -f http://ws.trivialsec:5080/healthcheck || exit 1
+      test: curl -f http://push.trivialsec:5080/healthcheck || exit 1
       timeout: 20s
       retries: 10
     networks:
