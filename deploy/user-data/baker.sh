@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-export COMMON_VERSION=0.4.4
+export TRIVIALSEC_PY_LIB_VER=0.4.4
 export NODE_PATH=/srv/app/node_modules
 
 function proxy_on() {
@@ -71,7 +71,7 @@ function install_sockets_deps() {
     runuser -l ec2-user -c 'make --version'
 }
 function deploy_sockets() {
-    aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/sockets.zip /tmp/trivialsec/sockets.zip
+    aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${TRIVIALSEC_PY_LIB_VER}/sockets.zip /tmp/trivialsec/sockets.zip
     unzip -qo /tmp/trivialsec/sockets.zip -d /srv/app
 }
 function configure_sockets() {

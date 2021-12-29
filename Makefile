@@ -1,7 +1,6 @@
 SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
-APP_NAME = sockets
 
 .PHONY: help
 
@@ -44,21 +43,11 @@ docker-purge: ## tries to compeltely remove all docker files and start clean
 	sudo service docker start
 
 up: ## Start the app
-	docker-compose up -d $(APP_NAME)
+	docker-compose up -d
 
 down: ## Stop the app
-	@docker-compose down
+	@docker-compose down --remove-orphans
 
 lint:
 	semgrep -q --strict --timeout=0 --config=p/ci --lang=javascript src/index.js
 	semgrep -q --strict --timeout=0 --config=p/nodejsscan --lang=javascript src/index.js
-
-package: prep
-	zip -9rq $(APP_NAME).zip src -x '*.DS_Store'
-	zip -uj9q $(APP_NAME).zip package.json
-
-package-upload: package
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/deploy-packages/$(COMMON_VERSION)/$(APP_NAME).zip
-
-package-dev: package
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/dev/$(COMMON_VERSION)/$(APP_NAME).zip

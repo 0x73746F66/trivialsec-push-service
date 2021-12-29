@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
-
+unset CONFIG_FILE
+unset NODE_ENV
+unset NODE_PATH
+unset SOCKETS_PORT
 reset
